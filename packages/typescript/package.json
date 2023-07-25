@@ -1,0 +1,16 @@
+{
+  "name": "getWeather",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "dependencies": {
+    "@types/node": "^20.3.3",
+    "chalk": "^4",
+    "dayjs": "^1.11.9",
+    "typescript": "^5.1.6"
+  }
+}

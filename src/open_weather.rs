@@ -1,7 +1,7 @@
 use chalk_rs::Chalk;
-use chrono::{DateTime, Local, Utc};
 use serde_derive::{Deserialize, Serialize};
-use std::time::{Duration, UNIX_EPOCH};
+use std::time::SystemTime;
+use time::OffsetDateTime;
 pub const GET_CITY_HOST: &str = "https://api.openweathermap.org/geo/1.0/direct?";
 pub const GET_WEATHER_HOST: &str = "https://api.openweathermap.org/data/2.5/weather?";
 #[derive(Serialize, Deserialize, Debug)]
@@ -22,8 +22,8 @@ struct OpenWeatherMain {
 struct OpenWeatherSys {
     country: String,
     id: i32,
-    sunrise: i32,
-    sunset: i32,
+    sunrise: i64,
+    sunset: i64,
 }
 #[derive(Serialize, Deserialize, Debug)]
 struct OpenWeatherWeather {
@@ -61,17 +61,16 @@ impl Weather {
     pub fn new(city: String) -> Weather {
         Weather { city }
     }
-    pub fn formate_timestamp(timestamp: i32) -> String {
-        let time = UNIX_EPOCH + Duration::from_secs(timestamp as u64);
-        let datetime = DateTime::<Local>::from(time);
-        datetime.format("%H:%M:%S").to_string()
+    pub fn formate_timestamp(timestamp: i64) -> String {
+        let time = OffsetDateTime::from_unix_timestamp(timestamp).expect("er");
+        time.to_string()[11..19].to_string()
     }
     pub async fn get_weather(&self) -> Result<OpenWeather, reqwest::Error> {
         let mut ch = Chalk::new();
-        ch.bg_magenta()
-            .cyan()
-            .bold()
-            .println(&format!("今天{}", Utc::now().format("%Y-%m-%d")));
+        ch.bg_magenta().cyan().bold().println(&format!(
+            "今天{:#?}",
+            OffsetDateTime::now_utc().to_string()[11..19].to_string()
+        ));
         let mut chalk = Chalk::new();
         let city_query = format!(
             "q={}&limit=1&appid=e5c0d6f7175a8bbea898f97168780150",
